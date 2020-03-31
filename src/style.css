@@ -152,7 +152,7 @@ div.holes div {
     align-self: center;
 }
 
-div.holes button {
+div.holes input {
     width: 15%;
     height: 95%;
     margin: 1px;
@@ -163,9 +163,11 @@ div.holes button {
     border-left: 4px solid white;
     color: #7e7d7d;
     box-shadow: 0 1px 4px 0px rgb(255, 250, 250);
+    text-align: center;
+    
 }
 
-div.holes button:hover {
+div.holes input:hover {
     cursor: pointer;
     background: rgb(153, 152, 152);
      border: none;

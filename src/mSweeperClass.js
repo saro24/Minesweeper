@@ -5,9 +5,11 @@ class Mines extends Component {
         super();
         this.state = {
             grid: [],
-            n:8
+            n: 10, //refers to the grid size
+            mines: 10, // number of mines to be spread around the board
+            timer:60*2
         }
-
+        this.getNumberOfNeighboursMines= this.getNumberOfNeighboursMines.bind(this);
         this.update = this.update.bind(this);
         this.MoorNeighbours = (row, column, n) => {
             var cb = column + 1 <= n - 1 ? column + 1 : null; //column bottom
@@ -24,8 +26,7 @@ class Mines extends Component {
                 { row: rl, column: ct },
                 { row: rr, column: cb },
                 { row: rl, column: cb }]
-
-            return neighbours;
+             return neighbours;
         }
 
     }
@@ -33,14 +34,16 @@ class Mines extends Component {
     generategrid(n) {
         var grid = [];
         var num = 0;
-        for (var row = 0; row < n; row++) {
+        for (var column = 0; column < n; column++) {
             var subGrid = [];
-            for (var column = 0; column < n; column++) {
+            for (var row = 0; row< n; row++) {
                 var one = {};
                 one.column = column;
                 one.row = row;
                 one.pointer = num;
-                one.neighbours = this.MoorNeighbours(one.row, one.column, n);
+                one.clicked = false;
+                one.mine = false;
+                one.neighbours = this.MoorNeighbours(one.row, one.column, n).filter(element => { return element.row != null && element.column != null })
                 subGrid.push(one);
                 num++;
             }
@@ -48,11 +51,40 @@ class Mines extends Component {
         }
         return grid;
     }
-    update(n) {
-        var array = this.generategrid(n);
+    generateMines(grid) {
+        for (var i = 0; i < this.state.mines; i++) {
+            var randomRow = Math.floor(Math.random() * this.state.n);
+            var randomColumn = Math.floor(Math.random() * this.state.n);
+            grid[randomRow][randomColumn].mine = true;
+        }
+        return grid;
+    }
+    update(n) { // function to update the state initialy 
+        var array = this.generateMines(this.generategrid(n));
         this.props = array;
+ 
         return array;
     }
+    getNumberOfNeighboursMines(event) {
+         
+        var n = 0;
+        var array = this.state.grid;
+        var row = event.target.getAttribute('row');
+        var column = event.target.getAttribute('column');
+         array[row][column].neighbours.forEach(element => {
+            if (array[element.row][element.column].mine==true) {
+                n++;
+            }
+         });   
+         array[row][column].clicked=true; 
+         this.setState({ 
+             grid: array 
+         }); 
+            
+        return {n: n, row:array[row][column]};       
+    } 
+
+   
     componentWillMount() {
         var array = this.update(this.state.n);
         this.setState({
@@ -60,9 +92,10 @@ class Mines extends Component {
         })
     }
     render() {
-        return (        
-                                
-            <Holes mines={this.state.grid} n={this.state.n}>  </Holes>           
+        return (
+             
+            <Holes mines={this.state.grid} n={this.state.n} neighbours={this.getNumberOfNeighboursMines}>  </Holes>
+
         )
     }
 }
