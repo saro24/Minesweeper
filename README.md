@@ -6,3 +6,4 @@ a rectangular board containing hidden "mines" or bombs without detonating any of
 clues about the number of neighboring mines in each field.
 #
 ![preview of the app ](preview.png)
+  #####  preview of the app
